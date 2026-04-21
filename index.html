@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>富士吉田・今日の運勢占い</title>
+    <style>
+        body { text-align: center; font-family: 'Helvetica Neue', Arial, sans-serif; background: #eef7ff; color: #333; padding: 20px; }
+        .main-container { width: 95%; max-width: 500px; margin: 0 auto; background: white; padding: 20px; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 4px solid #0055aa; }
+        
+        h1 { font-size: 1.2rem; color: #0055aa; margin-bottom: 20px; }
+
+        /* ③ キャラクター画像表示エリア */
+        #char-image { width: 100%; max-width: 280px; height: auto; border-radius: 20px; margin-bottom: 15px; }
+
+        .result-box { background: #f9f9f9; padding: 20px; border-radius: 20px; border: 1px dashed #ccc; }
+        
+        /* ① 運勢 */
+        #luck-rank { font-size: 2.5rem; font-weight: bold; display: block; margin: 10px 0; color: #ff4400; }
+
+        /* ② ラッキースポット */
+        .spot-label { font-size: 0.9rem; color: #666; margin-top: 15px; }
+        #lucky-spot-link { font-size: 1.3rem; font-weight: bold; color: #0077ee; text-decoration: none; display: block; margin-top: 5px; border-bottom: 2px solid #0077ee; padding-bottom: 5px; }
+        #lucky-spot-link:hover { color: #ff6600; border-bottom-color: #ff6600; }
+        
+        .footer-note { font-size: 0.8rem; color: #999; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <h1>🗻 富士吉田・今日の占い 🗻</h1>
+
+        <img id="char-image" src="" alt="占いキャラクター">
+
+        <div class="result-box">
+            <span class="spot-label">あなたの今日の運勢は</span>
+            <span id="luck-rank">...</span>
+            
+            <hr style="border: 0; border-top: 1px solid #eee;">
+            
+            <span class="spot-label">おすすめのラッキースポット</span>
+            <a id="lucky-spot-link" href="#" target="_blank">...</a>
+            <p style="font-size: 0.8rem; color: #888;">(タップすると詳細が見れるよ！)</p>
+        </div>
+
+        <p class="footer-note">QRコードを読み直すと結果が変わるよ！</p>
+    </div>
+
+    <script>
+        // --- データ設定 ---
+
+        // ① 運勢とキャラクター画像
+        const fortunes = [
+            { rank: "大吉", img: "img_daikichi.png" },
+            { rank: "中吉", img: "img_chukichi.png" },
+            { rank: "小吉", img: "img_shokichi.png" },
+            { rank: "吉",   img: "img_kichi.png" },
+            { rank: "末吉", img: "img_suekichi.png" },
+            { rank: "凶",   img: "img_kyo.png" },
+            { rank: "大凶", img: "img_daikyo.png" }
+        ];
+
+        // ② 富士吉田ラッキースポット（20か所）
+        const spots = [
+            { name: "北口本宮冨士浅間神社", url: "https://fujiyoshida.net/spot/23" },
+            { name: "鐘山の滝", url: "https://fujiyoshida.net/spot/33" },
+            { name: "富士山レーダードーム", url: "https://fujiyoshida.net/spot/13" },
+            { name: "ふじさんミュージアム", url: "https://fujiyoshida.net/spot/15" },
+            { name: "中ノ茶屋", url: "https://fujiyoshida.net/spot/52" },
+            { name: "ディアディア", url: "https://fujiyoshida.net/feature/DEAR%20DEER/DEAR%20DEER" },
+            { name: "明見湖", url: "https://fujiyoshida.net/spot/30" },
+            { name: "西裏", url: "https://fujiyoshida.net/feature/nishiura/index" },
+            { name: "パインズパーク", url: "https://fujiyoshida.net/spot/18" },
+            { name: "恩賜林公園", url: "https://fujiyoshida.net/feature/onshirin/index" },
+            { name: "小室浅間神社", url: "https://fujiyoshida.net/spot/29" },
+            { name: "新屋山神社", url: "https://fujiyoshida.net/spot/34" },
+            { name: "農村公園", url: "https://fujiyoshida.net/spot/40" },
+            { name: "馬刺しが買える精肉店", url: "https://fujiyoshida.net/gourmet/list?sortType=access&listStyle=tile&latitude=&longitude=&keyword=%E9%A6%AC%E5%88%BA&category_m%5B%5D=18#searchResultArea" },
+            { name: "富士山形のグルメ＆スイーツ店", url: "https://fujiyoshida.net/feature/fujisan_gourmet/index" },
+            { name: "美味しいアイス屋さん", url: "https://fujiyoshida.net/feature/fujiyoshida_icecream/fujiyoshida_icecream" },
+            { name: "おしゃれなカフェ", url: "https://fujiyoshida.net/feature/fujiyoshida_cafe/fujiyoshida_cafe" },
+            { name: "地酒が買える酒屋さん", url: "https://fujiyoshida.net/feature/fujiyoshida_osake/fujiyoshida_osake" },
+            { name: "日帰り温泉", url: "https://fujiyoshida.net/feature/winter-hot-spring/winter-hot-spring" },
+            { name: "見るだけでも楽しい雑貨屋さん", url: "https://fujiyoshida.net/feature/fujiyoshida_zakka/fujiyoshida_zakka" }
+        ];
+
+        // --- 実行処理 ---
+        function runFortune() {
+            // 運勢を決定
+            const f = fortunes[Math.floor(Math.random() * fortunes.length)];
+            document.getElementById('luck-rank').innerText = f.rank;
+            document.getElementById('char-image').src = f.img;
+            document.getElementById('char-image').alt = f.rank + "を喜ぶキャラクター";
+
+            // ラッキースポットを決定
+            const s = spots[Math.floor(Math.random() * spots.length)];
+            const linkEl = document.getElementById('lucky-spot-link');
+            linkEl.innerText = s.name;
+            linkEl.href = s.url;
+        }
+
+        window.onload = runFortune;
+    </script>
+</body>
+</html>
