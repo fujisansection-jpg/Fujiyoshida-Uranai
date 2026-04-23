@@ -4,43 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>今日の占いin富士吉田</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
-        /* --- 全体・トーン --- */
+        /* --- 全体デザイン --- */
         body {
             font-family: 'Noto Sans JP', sans-serif;
             text-align: center;
-            background-color: #f0faff; /* さわやかな水色の背景色（画像がない場合） */
-            background-image: linear-gradient(135deg, #f0faff 0%, #fff0f5 100%); /* 淡い水色からピンクへのグラデーション */
+            background-color: #f0faff;
+            background-image: linear-gradient(135deg, #f0faff 0%, #fff0f5 100%);
             color: #333;
             margin: 0;
-            padding: 0;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             min-height: 100vh;
         }
 
-        /* --- タイトル --- */
         #title-container {
-            margin-top: 20px;
-            padding: 10px 20px;
+            margin-bottom: 20px;
+            padding: 10px 30px;
             background-color: white;
             border-radius: 50px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
         
-        h1 {
-            font-size: 1.5rem;
-            color: #0077ee; /* タイトルは濃い水色 */
-            margin: 0;
-        }
+        h1 { font-size: 1.5rem; color: #0077ee; margin: 0; }
 
-        /* --- メインコンテンツ・レイアウト --- */
         .content-wrapper {
             position: relative;
             width: 100%;
@@ -48,92 +39,75 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-top: 30px;
+            margin-top: 20px;
         }
 
-        /* --- ③ キャラクター画像（男性） --- */
-        #char-image {
-            width: 80%; /* 画像の幅を調整 */
-            max-width: 350px;
-            height: auto;
-            border-radius: 30px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
-
-        /* --- ① 運勢の吹き出し --- */
-        #fortune-speech-bubble {
-            position: absolute; /* 画像に対して絶対配置 */
-            top: 20%; /* 口元あたりの位置 */
-            right: 0%; /* 右側に配置 */
-            transform: translateY(-50%) translateX(20%); /* 位置の微調整 */
-            background-color: #fffacd; /* 吹き出しの背景は淡い黄色 */
-            padding: 15px 25px;
-            border-radius: 30px;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.08);
-            border: 2px solid #ffb6c1; /* 枠線は淡いピンク */
-            display: inline-block;
-            max-width: 200px;
-        }
-
-        /* 吹き出しの三角部分（CSSで作成） */
-        #fortune-speech-bubble::after {
-            content: "";
-            position: absolute;
-            top: 50%;
-            left: -15px; /* 左側に三角を出す */
-            transform: translateY(-50%);
-            border-width: 15px 15px 15px 0;
-            border-style: solid;
-            border-color: transparent #fffacd transparent transparent; /* 三角も淡い黄色 */
+        /* --- 画像切り替えエリア --- */
+        #char-image-container {
+            width: 100%;
+            max-width: 300px;
+            height: 400px;
+            position: relative;
         }
         
-        #fortune-result {
+        #char-image-container img {
+            width: 100%;
+            height: auto;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        
+        #char-image-container img.active { opacity: 1; }
+
+        /* --- ふわふわ吹き出し --- */
+        #fortune-speech-bubble {
+            position: relative;
+            background-color: #fffacd;
+            padding: 30px 40px;
+            border-radius: 50% 50% 50% 20%;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border: 3px solid #ffb6c1;
+            margin-top: -50px;
+            margin-bottom: 30px;
+            z-index: 5;
             font-size: 1.2rem;
-            font-weight: bold;
-            color: #ff69b4; /* 運勢結果は濃いピンク */
+            line-height: 1.4;
         }
 
-        /* --- ② 今日のラッキースポット --- */
+        #fortune-result {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ff69b4;
+            display: block;
+            margin-top: 5px;
+        }
+
+        /* --- ラッキースポットエリア --- */
         #lucky-spot-container {
             width: 90%;
             max-width: 400px;
             background-color: white;
             padding: 20px;
             border-radius: 30px;
-            margin-top: 30px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            border: 3px solid #ffb6c1; /* 枠線は淡いピンク */
+            border: 3px solid #ffb6c1;
         }
 
-        #lucky-spot-label {
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 10px;
-        }
+        #lucky-spot-label { font-size: 0.9rem; color: #666; margin-bottom: 10px; }
         
         #lucky-spot-link {
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             font-weight: bold;
-            color: #0077ee; /* スポット名は濃い水色 */
+            color: #0077ee;
             text-decoration: none;
             display: inline-block;
-            padding: 5px 10px;
-            background-color: #e0f2ff; /* 淡い水色の背景 */
-            border-radius: 10px;
-        }
-
-        #lucky-spot-link:hover {
-            color: #ff6600;
-            background-color: #fff0e0;
-        }
-
-        .refresh-note {
-            font-size: 0.8rem;
-            color: #999;
-            margin-top: 30px;
             padding: 10px;
+            background-color: #e0f2ff;
+            border-radius: 15px;
         }
-
     </style>
 </head>
 <body>
@@ -143,31 +117,24 @@
     </div>
 
     <div class="content-wrapper">
-        
-        <img id="char-image" src="image_0.png" alt="占いキャラクター">
+        <div id="char-image-container">
+            <img id="image1" src="image_1.png" alt="占いキャラクター" class="active">
+            <img id="image2" src="image_2.png" alt="占いキャラクター">
+        </div>
         
         <div id="fortune-speech-bubble">
-            あなたの運勢は<br>
+            あなたの運勢は
             <span id="fortune-result">...</span>
         </div>
-
     </div>
 
     <div id="lucky-spot-container">
-        <div id="lucky-spot-label">あなたの今日のラッキースポット</div>
+        <div id="lucky-spot-label">今日のラッキースポット</div>
         <a id="lucky-spot-link" href="#" target="_blank">...</a>
-        <p style="font-size: 0.8rem; color: #888;">(タップして詳細をチェック！)</p>
     </div>
 
-    <p class="refresh-note">QRコードを読み直すと結果が変わります！</p>
-
     <script>
-        // --- データ設定 ---
-
-        // ① 運勢データ
         const fortunes = ["大吉", "中吉", "小吉", "吉", "末吉", "凶", "大凶"];
-
-        // ② 富士吉田ラッキースポット（20か所、リンク付き）
         const spots = [
             { name: "北口本宮冨士浅間神社", url: "https://fujiyoshida.net/spot/23" },
             { name: "鐘山の滝", url: "https://fujiyoshida.net/spot/33" },
@@ -191,18 +158,20 @@
             { name: "見るだけでも楽しい雑貨屋さん", url: "https://fujiyoshida.net/feature/fujiyoshida_zakka/fujiyoshida_zakka" }
         ];
 
-        // --- 占い実行 ---
-
         function runFortune() {
-            // 1. 運勢を決定
-            const fortune = fortunes[Math.floor(Math.random() * fortunes.length)];
-            document.getElementById('fortune-result').innerText = fortune;
-
-            // 2. ラッキースポットを決定
+            document.getElementById('fortune-result').innerText = fortunes[Math.floor(Math.random() * fortunes.length)];
             const spot = spots[Math.floor(Math.random() * spots.length)];
             const linkEl = document.getElementById('lucky-spot-link');
             linkEl.innerText = spot.name;
             linkEl.href = spot.url;
+
+            // 1秒ごとの画像切り替え
+            const img1 = document.getElementById('image1');
+            const img2 = document.getElementById('image2');
+            setInterval(() => {
+                img1.classList.toggle('active');
+                img2.classList.toggle('active');
+            }, 1000);
         }
 
         window.onload = runFortune;
