@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
-        /* --- 全体デザイン --- */
         body {
             font-family: 'Noto Sans JP', sans-serif;
             text-align: center;
@@ -32,17 +31,52 @@
         
         h1 { font-size: 1.5rem; color: #0077ee; margin: 0; }
 
-        .content-wrapper {
-            position: relative;
+        /* --- オープニング動画エリア --- */
+        #video-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: black;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        #opening-video {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+        }
+
+        #start-button {
+            margin-top: 20px;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            background: #ff69b4;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255,105,180,0.4);
+        }
+
+        /* --- メインコンテンツ（最初は隠しておく） --- */
+        #main-content {
+            display: none; /* 動画が終わるまで非表示 */
             width: 100%;
             max-width: 500px;
+        }
+
+        .content-wrapper {
+            position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
             margin-top: 20px;
         }
 
-        /* --- 画像切り替えエリア --- */
         #char-image-container {
             width: 100%;
             max-width: 300px;
@@ -54,15 +88,13 @@
             width: 100%;
             height: auto;
             position: absolute;
-            top: 0;
-            left: 0;
+            top: 0; left: 0;
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
         }
         
         #char-image-container img.active { opacity: 1; }
 
-        /* --- ふわふわ吹き出し --- */
         #fortune-speech-bubble {
             position: relative;
             background-color: #fffacd;
@@ -74,7 +106,6 @@
             margin-bottom: 30px;
             z-index: 5;
             font-size: 1.2rem;
-            line-height: 1.4;
         }
 
         #fortune-result {
@@ -85,10 +116,7 @@
             margin-top: 5px;
         }
 
-        /* --- ラッキースポットエリア --- */
         #lucky-spot-container {
-            width: 90%;
-            max-width: 400px;
             background-color: white;
             padding: 20px;
             border-radius: 30px;
@@ -96,8 +124,6 @@
             border: 3px solid #ffb6c1;
         }
 
-        #lucky-spot-label { font-size: 0.9rem; color: #666; margin-bottom: 10px; }
-        
         #lucky-spot-link {
             font-size: 1.2rem;
             font-weight: bold;
@@ -112,25 +138,32 @@
 </head>
 <body>
 
-    <div id="title-container">
-        <h1>🗻 今日の占いin富士吉田 🗻</h1>
+    <div id="video-overlay">
+        <video id="opening-video" src="opening.mp4" playsinline></video>
+        <button id="start-button" onclick="startFortune()">占う！</button>
     </div>
 
-    <div class="content-wrapper">
-        <div id="char-image-container">
-            <img id="image1" src="image_1.png" alt="占いキャラクター" class="active">
-            <img id="image2" src="image_2.png" alt="占いキャラクター">
+    <div id="main-content">
+        <div id="title-container">
+            <h1>🗻 今日の占いin富士吉田 🗻</h1>
         </div>
-        
-        <div id="fortune-speech-bubble">
-            あなたの運勢は
-            <span id="fortune-result">...</span>
-        </div>
-    </div>
 
-    <div id="lucky-spot-container">
-        <div id="lucky-spot-label">今日のラッキースポット</div>
-        <a id="lucky-spot-link" href="#" target="_blank">...</a>
+        <div class="content-wrapper">
+            <div id="char-image-container">
+                <img id="image1" src="image_1.png" alt="占いキャラクター" class="active">
+                <img id="image2" src="image_2.png" alt="占いキャラクター">
+            </div>
+            
+            <div id="fortune-speech-bubble">
+                あなたの運勢は
+                <span id="fortune-result">...</span>
+            </div>
+        </div>
+
+        <div id="lucky-spot-container">
+            <div style="font-size: 0.9rem; color: #666; margin-bottom: 10px;">今日のラッキースポット</div>
+            <a id="lucky-spot-link" href="#" target="_blank">...</a>
+        </div>
     </div>
 
     <script>
@@ -158,14 +191,31 @@
             { name: "見るだけでも楽しい雑貨屋さん", url: "https://fujiyoshida.net/feature/fujiyoshida_zakka/fujiyoshida_zakka" }
         ];
 
-        function runFortune() {
+        const video = document.getElementById('opening-video');
+        const overlay = document.getElementById('video-overlay');
+        const mainContent = document.getElementById('main-content');
+
+        // 「占う」ボタンを押した時
+        function startFortune() {
+            document.getElementById('start-button').style.display = 'none'; // ボタンを消す
+            video.play(); // 動画再生
+        }
+
+        // 動画が終了した時の処理
+        video.onended = function() {
+            overlay.style.display = 'none'; // 動画画面を消す
+            mainContent.style.display = 'block'; // 占い結果を出す
+            showResult(); // 結果を計算
+        };
+
+        function showResult() {
             document.getElementById('fortune-result').innerText = fortunes[Math.floor(Math.random() * fortunes.length)];
             const spot = spots[Math.floor(Math.random() * spots.length)];
             const linkEl = document.getElementById('lucky-spot-link');
             linkEl.innerText = spot.name;
             linkEl.href = spot.url;
 
-            // 1秒ごとの画像切り替え
+            // キャラ画像切り替えスタート
             const img1 = document.getElementById('image1');
             const img2 = document.getElementById('image2');
             setInterval(() => {
@@ -173,8 +223,6 @@
                 img2.classList.toggle('active');
             }, 1000);
         }
-
-        window.onload = runFortune;
     </script>
 </body>
 </html>
